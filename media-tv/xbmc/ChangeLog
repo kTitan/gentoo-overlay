@@ -1,0 +1,18 @@
+# ChangeLog for media-tv/xbmc
+# Copyright 1999-2010 Gentoo Foundation; Distributed under the GPL v2
+# $Header: $
+
+  02 Jun 2010; kTitan +xbmc-9999.ebuild, +metadata.xml:
+  added dependcy net-libs/libmicrohttpd and reenabled webserver (gentoo bug
+  #305229)
+  forced to use internal python, other things stay external (gentoo bug
+  #304521)
+  disabled "enable-goom" because of current build failures
+  fixed installion by using einstall, manually copy docs
+  removed "hal" compile use flag because its no longer supported upstream
+
+*xbmc-9999 (31 May 2010)
+
+  31 May 2010; kTitan +xbmc-9999.ebuild, +metadata.xml:
+  copied from gentoo portage rev v1.56
+
