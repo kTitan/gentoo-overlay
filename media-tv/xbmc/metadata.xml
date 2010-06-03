@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
-<herd>xbox</herd>
 <use>
  <flag name='midi'>Support MIDI files</flag>
  <flag name='xrandr'>Support X randr extension</flag>
