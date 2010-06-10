@@ -1,0 +1,10 @@
+# ChangeLog for dev-python/tvdb_api
+# Copyright 1999-2010 Gentoo Foundation; Distributed under the GPL v2
+# $Header: $
+
+*tvdb_api-9999 (10 Jun 2010)
+*tvdb_api-1.5 (10 Jun 2010)
+
+  10 Jun 2010; kTitan +tvdb_api-1.5.ebuild, +tvdb_api-9999.ebuild:
+  Created tvdb_api ebuild for git and latest version (1.5)
+
