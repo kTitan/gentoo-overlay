@@ -26,7 +26,7 @@ HOMEPAGE="http://xbmc.org/"
 
 LICENSE="GPL-2"
 SLOT="0"
-IUSE="aac alsa altivec avahi css debug joystick midi profile pulseaudio sse sse2 vaapi vdpau xrandr"
+IUSE="aac alsa altivec avahi css debug hal joystick midi profile pulseaudio sse sse2 vaapi vdpau xrandr"
 
 RDEPEND="virtual/opengl
 	app-arch/bzip2
@@ -62,6 +62,7 @@ RDEPEND="virtual/opengl
 	media-libs/libogg
 	media-libs/libsamplerate
 	media-libs/libsdl[alsa,audio,opengl,video,X]
+	alsa? ( media-libs/libsdl[alsa] )
 	media-libs/libvorbis
 	media-libs/sdl-gfx
 	media-libs/sdl-image[gif,jpeg,png]
@@ -75,6 +76,7 @@ RDEPEND="virtual/opengl
 	net-misc/curl
 	|| ( >=net-fs/samba-3.4.6[smbclient] <net-fs/samba-3.3 )
 	sys-apps/dbus
+	hal? ( sys-apps/hal )
 	sys-libs/zlib
 	virtual/mysql
 	x11-apps/xdpyinfo
@@ -90,7 +92,7 @@ RDEPEND="virtual/opengl
 	net-libs/libmicrohttpd"
 # The cpluff bundled addon uses gettext which needs CVS ...
 DEPEND="${RDEPEND}
-	dev-util/cvs
+	dev-vcs/cvs
 	x11-proto/xineramaproto
 	dev-util/cmake
 	x86? ( dev-lang/nasm )"
@@ -117,7 +119,7 @@ src_prepare() {
 
 	# some dirs ship generated autotools, some dont
 	local d
-	for d in . xbmc/cores/dvdplayer/Codecs/{libbdnav,libdvd/lib*/} lib/cpluff ; do
+	for d in . xbmc/cores/dvdplayer/Codecs/libdvd/lib*/ lib/cpluff ; do
 		[[ -e ${d}/configure ]] && continue
 		pushd ${d} >/dev/null
 		einfo "Generating autotools in ${d}"
@@ -166,13 +168,15 @@ src_configure() {
 		--disable-optimizations \
 		--enable-external-ffmpeg \
 		--enable-external-liba52 \
-		--enable-external-libass \
+		--enable-external-libdts \
 		--disable-external-python \
 		--enable-gl \
+		--enable-goom \
 		$(use_enable avahi) \
 		$(use_enable css dvdcss) \
 		$(use_enable debug) \
 		$(use_enable aac faac) \
+		$(use_enable hal) \
 		$(use_enable joystick) \
 		$(use_enable midi mid) \
 		$(use_enable profile profiling) \
@@ -183,10 +187,14 @@ src_configure() {
 }
 
 src_install() {
-	einstall || die "Install failed!"
+	emake DESTDIR="${D}" install || die "Install failed"
 
-	insinto /usr/share/xbmc/web/
-	doins -r "${S}"/web/*/
+	#insinto /usr/share/xbmc/web/
+	#doins -r "${S}"/web/*/
+
+	# fix lib install
+	insinto /usr/lib/xbmc/system
+	doins system/*.so || die "doins"
 
 	insinto /usr/share/applications
 	doins tools/Linux/xbmc.desktop

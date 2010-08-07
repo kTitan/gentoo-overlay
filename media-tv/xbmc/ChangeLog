@@ -2,6 +2,12 @@
 # Copyright 1999-2010 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  07 Aug 2010; kTitan xbmc-9999.ebuild:
+  fixed cvs depends
+  sync with gentoo live ebuild
+  removed autotool run from libbdnav
+  reenable goom
+
   02 Jun 2010; kTitan +xbmc-9999.ebuild, +metadata.xml:
   added dependcy net-libs/libmicrohttpd and reenabled webserver (gentoo bug
   #305229)
