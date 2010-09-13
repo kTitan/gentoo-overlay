@@ -20,7 +20,7 @@ fi
 
 DESCRIPTION="Automatic TV episode file renamer, uses data from thetvdb.com via
 tvdb_api."
-HOMEPAGE="http://github.com/dbr/tvdb_api"
+HOMEPAGE="http://github.com/dbr/tvnamer"
 
 LICENSE="GPL-2"
 SLOT="0"
