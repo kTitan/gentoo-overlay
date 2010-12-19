@@ -1,0 +1,14 @@
+# ChangeLog for dev-python/tvnamer
+# Copyright 1999-2010 Gentoo Foundation; Distributed under the GPL v2
+# $Header: $
+
+  13 Sep 2010; kTitan tvnamer-9999.ebuild:
+  fixed homepage url
+
+*tvnamer-9999 (11 Jun 2010)
+*tvnamer-2.0 (11 Jun 2010)
+
+  11 Jun 2010; kTitan +tvnamer-2.0.ebuild, +tvnamer-9999.ebuild,
+  +metadata.xml:
+  added tvnamer in live and 2.0 version
+
