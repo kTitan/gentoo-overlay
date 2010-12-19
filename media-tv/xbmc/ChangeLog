@@ -2,6 +2,9 @@
 # Copyright 1999-2010 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  19 Dec 2010; kTitan xbmc-9999.ebuild:
+  changed to current git "overlay"
+
   07 Aug 2010; kTitan xbmc-9999.ebuild:
   fixed cvs depends
   sync with gentoo live ebuild

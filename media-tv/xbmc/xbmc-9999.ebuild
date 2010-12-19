@@ -6,12 +6,10 @@ EAPI="2"
 
 inherit eutils python
 
-# Use XBMC_ESVN_REPO_URI to track a different branch
-ESVN_REPO_URI=${XBMC_ESVN_REPO_URI:-http://xbmc.svn.sourceforge.net/svnroot/xbmc/trunk}
-ESVN_PROJECT=${ESVN_REPO_URI##*/svnroot/}
-ESVN_PROJECT=${ESVN_PROJECT%/*}
+# Use XBMC_EGIT_REPO_URI to track a different branch
+EGIT_REPO_URI=${XBMC_EGIT_REPO_URI:-https://github.com/xbmc/xbmc.git}
 if [[ ${PV} == "9999" ]] ; then
-	inherit subversion autotools
+	inherit git autotools
 	KEYWORDS=""
 else
 	inherit autotools
@@ -99,7 +97,7 @@ DEPEND="${RDEPEND}
 
 src_unpack() {
 	if [[ ${PV} == "9999" ]] ; then
-		subversion_src_unpack
+		git_src_unpack
 		cd "${S}"
 		rm -f configure
 	else
