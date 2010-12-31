@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE repositories SYSTEM "/dtd/repositories.dtd">
+<repositories xmlns="" version="1.0">
+ <repo quality="experimental" status="unofficial">
+   <name>kTitan</name>
+   <description>kTitan's gentoo overlay</description>
+   <homepage>http://github.com/kTitan/gentoo-overlay</homepage>
+   <owner>
+     <email>alexander.schneider@gmail.com</email>
+     <name>kTitan</name>
+   </owner>
+   <source type="git">git://github.com/kTitan/gentoo-overlay.git</source>
+   <source type="git">http://github.com/kTitan/gentoo-overlay.git</source>
+   <feed>https://github.com/kTitan/gentoo-overlay/commits/master.atom</feed>
+ </repo>
+</repositories>
