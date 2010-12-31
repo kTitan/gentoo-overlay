@@ -1,6 +1,14 @@
-# ChangeLog for dev-python/tvnamer
+# ChangeLog for sys-apps/tvnamer
 # Copyright 1999-2010 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
+
+*tvnamer-2.1 (31 Dec 2010)
+
+  31 Dec 2010; kTitan +tvnamer-2.1.ebuild, tvnamer-9999.ebuild:
+  Added depend for wget-1.12-r3 otherwise github download would fail. 
+  See #344939 for more info
+
+  Added tvnamer 2.1 ebuild
 
   13 Sep 2010; kTitan tvnamer-9999.ebuild:
   fixed homepage url

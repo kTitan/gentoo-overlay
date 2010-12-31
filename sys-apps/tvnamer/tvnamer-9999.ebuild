@@ -15,7 +15,7 @@ if [[ ${PV} == *9999* ]]; then
 	SRC_URI=""
 else
 	KEYWORDS="~amd64 ~x86"
-	SRC_URI="http://github.com/dbr/${PN}/tarball/${PV} -> ${P}.tar.gz"
+	SRC_URI="https://github.com/dbr/${PN}/tarball/${PV} -> ${P}.tar.gz"
 fi
 
 DESCRIPTION="Automatic TV episode file renamer, uses data from thetvdb.com via
@@ -26,7 +26,8 @@ LICENSE="GPL-2"
 SLOT="0"
 IUSE=""
 
-DEPEND="dev-python/setuptools"
+DEPEND="dev-python/setuptools
+	>=net-misc/wget-1.12-r3"
 RDEPEND="dev-python/tvdb_api
 	dev-python/simplejson"
 
