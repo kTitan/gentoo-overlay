@@ -1,6 +1,9 @@
 # ChangeLog for media-tv/xbmc
-# Copyright 1999-2010 Gentoo Foundation; Distributed under the GPL v2
+# Copyright 1999-2011 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
+
+  04 Jan 2011; kTitan xbmc-9999.ebuild, metadata.xml:
+  sync with portage ebuild for use flags and compile things
 
   19 Dec 2010; kTitan xbmc-9999.ebuild:
   changed to current git "overlay"

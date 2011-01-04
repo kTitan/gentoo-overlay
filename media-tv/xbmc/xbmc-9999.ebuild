@@ -1,4 +1,4 @@
-# Copyright 1999-2010 Gentoo Foundation
+# Copyright 1999-2011 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Header: /var/cvsroot/gentoo-x86/media-tv/xbmc/xbmc-9999.ebuild,v 1.56 2010/05/23 23:22:58 vapier Exp $
 
@@ -24,9 +24,9 @@ HOMEPAGE="http://xbmc.org/"
 
 LICENSE="GPL-2"
 SLOT="0"
-IUSE="aac alsa altivec avahi css debug hal joystick midi profile pulseaudio sse sse2 vaapi vdpau xrandr"
+IUSE="aac alsa altivec avahi bluray css debug hal joystick midi profile pulseaudio rtmp sse sse2 udev vaapi vdpau webserver xrandr"
 
-RDEPEND="virtual/opengl
+COMMON_DEPEND="virtual/opengl
 	app-arch/bzip2
 	app-arch/unrar
 	app-arch/unzip
@@ -36,10 +36,9 @@ RDEPEND="virtual/opengl
 	dev-libs/boost
 	dev-libs/fribidi
 	dev-libs/libcdio[-minimal]
-	dev-libs/libpcre
+	dev-libs/libpcre[cxx]
 	dev-libs/lzo
 	>=dev-python/pysqlite-2
-	media-libs/a52dec
 	media-libs/alsa-lib
 	aac? ( media-libs/faac )
 	media-libs/faad2
@@ -51,7 +50,7 @@ RDEPEND="virtual/opengl
 	media-libs/jbigkit
 	media-libs/jpeg:0
 	>=media-libs/libass-0.9.7
-	media-libs/libdca
+	bluray? ( media-libs/libbluray )
 	css? ( media-libs/libdvdcss )
 	media-libs/libmad
 	media-libs/libmms
@@ -69,8 +68,10 @@ RDEPEND="virtual/opengl
 	media-libs/tiff
 	pulseaudio? ( media-sound/pulseaudio )
 	media-sound/wavpack
-	media-video/ffmpeg
+	>=media-video/ffmpeg-0.6
+	rtmp? ( media-video/rtmpdump )
 	avahi? ( net-dns/avahi )
+	webserver? ( net-libs/libmicrohttpd )
 	net-misc/curl
 	|| ( >=net-fs/samba-3.4.6[smbclient] <net-fs/samba-3.3 )
 	sys-apps/dbus
@@ -86,10 +87,12 @@ RDEPEND="virtual/opengl
 	)
 	x11-libs/libXinerama
 	xrandr? ( x11-libs/libXrandr )
-	x11-libs/libXrender
-	net-libs/libmicrohttpd"
+	x11-libs/libXrender"
 # The cpluff bundled addon uses gettext which needs CVS ...
-DEPEND="${RDEPEND}
+RDEPEND="${COMMON_DEPEND}
+	udev? ( sys-fs/udisks sys-power/upower )"
+DEPEND="${COMMON_DEPEND}
+	dev-util/gperf
 	dev-vcs/cvs
 	x11-proto/xineramaproto
 	dev-util/cmake
@@ -117,7 +120,7 @@ src_prepare() {
 
 	# some dirs ship generated autotools, some dont
 	local d
-	for d in . xbmc/cores/dvdplayer/Codecs/libdvd/lib*/ lib/cpluff ; do
+	for d in . xbmc/cores/dvdplayer/Codecs/{libdts,libdvd/lib*/} lib/cpluff ; do
 		[[ -e ${d}/configure ]] && continue
 		pushd ${d} >/dev/null
 		einfo "Generating autotools in ${d}"
@@ -146,6 +149,11 @@ src_prepare() {
 	# Do not use termcap #262822
 	sed -i 's:-ltermcap::' xbmc/lib/libPython/Python/configure
 
+	# avoid long delays when powerkit isn't running #348580
+	sed -i \
+		-e '/dbus_connection_send_with_reply_and_block/s:-1:3000:' \
+		xbmc/linux/*.cpp || die
+
 	epatch_user #293109
 
 	# Tweak autotool timestamps to avoid regeneration
@@ -157,8 +165,6 @@ src_configure() {
 	export ac_cv_path_LATEX=no
 	# Avoid help2man
 	export HELP2MAN=$(type -P help2man || echo true)
-	# Force python-2.4 for now #304521
-	export ac_cv_lib_python2_{5,6}_main=no
 
 	econf \
 		--docdir=/usr/share/doc/${PF} \
@@ -168,9 +174,10 @@ src_configure() {
 		--enable-external-liba52 \
 		--enable-external-libdts \
 		--disable-external-python \
-		--enable-gl \
 		--enable-goom \
+		--enable-gl \
 		$(use_enable avahi) \
+		$(use_enable bluray libbluray) \
 		$(use_enable css dvdcss) \
 		$(use_enable debug) \
 		$(use_enable aac faac) \
@@ -179,27 +186,20 @@ src_configure() {
 		$(use_enable midi mid) \
 		$(use_enable profile profiling) \
 		$(use_enable pulseaudio pulse) \
+		$(use_enable rtmp) \
 		$(use_enable vaapi) \
 		$(use_enable vdpau) \
+		$(use_enable webserver) \
 		$(use_enable xrandr)
 }
 
 src_install() {
 	emake DESTDIR="${D}" install || die "Install failed"
-
-	#insinto /usr/share/xbmc/web/
-	#doins -r "${S}"/web/*/
-
-	# fix lib install
-	insinto /usr/lib/xbmc/system
-	doins system/*.so || die "doins"
+	prepalldocs
 
 	insinto /usr/share/applications
 	doins tools/Linux/xbmc.desktop
 	doicon tools/Linux/xbmc.png
-
-	dodoc README.linux
-	rm "${D}"/usr/share/xbmc/{README.linux,LICENSE.GPL,*.txt}
 
 	insinto "$(python_get_sitedir)" #309885
 	doins tools/EventClients/lib/python/xbmcclient.py || die
