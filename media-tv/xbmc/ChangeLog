@@ -2,6 +2,9 @@
 # Copyright 1999-2011 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  26 Jan 2011; kTitan xbmc-9999.ebuild:
+  some little improvments
+
   04 Jan 2011; kTitan xbmc-9999.ebuild, metadata.xml:
   sync with portage ebuild for use flags and compile things
 

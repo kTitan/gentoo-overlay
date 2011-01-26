@@ -1,6 +1,6 @@
 # Copyright 1999-2011 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/media-tv/xbmc/xbmc-9999.ebuild,v 1.56 2010/05/23 23:22:58 vapier Exp $
+# $Header: $
 
 EAPI="2"
 
@@ -8,6 +8,7 @@ inherit eutils python
 
 # Use XBMC_EGIT_REPO_URI to track a different branch
 EGIT_REPO_URI=${XBMC_EGIT_REPO_URI:-https://github.com/xbmc/xbmc.git}
+EGIT_BRANCH=${XBMC_EGIT_BRANCH:-master}
 if [[ ${PV} == "9999" ]] ; then
 	inherit git autotools
 	KEYWORDS=""
@@ -58,7 +59,7 @@ COMMON_DEPEND="virtual/opengl
 	media-libs/libmpeg2
 	media-libs/libogg
 	media-libs/libsamplerate
-	media-libs/libsdl[alsa,audio,opengl,video,X]
+	media-libs/libsdl[audio,opengl,video,X]
 	alsa? ( media-libs/libsdl[alsa] )
 	media-libs/libvorbis
 	media-libs/sdl-gfx
@@ -139,7 +140,7 @@ src_prepare() {
 
 	# Fix XBMC's final version string showing as "exported"
 	# instead of the SVN revision number.
-	export SVN_REV=${ESVN_WC_REVISION:-exported}
+	export HAVE_GIT=no GIT_REV=${EGIT_VERSION:-exported}
 
 	# Avoid lsb-release dependency
 	sed -i \
@@ -207,5 +208,5 @@ src_install() {
 }
 
 pkg_postinst() {
-	elog "Visit http://xbmc.org/wiki/?title=XBMC_Online_Manual"
+	elog "Visit http://wiki.xbmc.org/?title=XBMC_Online_Manual"
 }
