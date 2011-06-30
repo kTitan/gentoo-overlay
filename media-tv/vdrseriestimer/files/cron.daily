@@ -1,0 +1,12 @@
+#!/bin/sh
+
+# Set LISTSDIR to your episodes lists dir!
+
+LISTSDIR=/var/vdr/eplists/episodes/
+
+[ -z "$LISTSDIR" ] && (echo "Set ListsDir!"; exit 1; )
+
+# Use TGET (since|newer than) x (minutes|hours|days|weeks|months|years).
+
+svdrpsend-ng.pl -d eplists.constabel.net -p 2006 -c -e UTF8 -o "${LISTSDIR}" TGET newer than 25 hours
+

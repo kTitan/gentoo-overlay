@@ -1,0 +1,10 @@
+# ChangeLog for media-tv/vdrseriestimer
+# Copyright 1999-2011 Gentoo Foundation; Distributed under the GPL v2
+# $Header: $
+
+*vdrseriestimer-9999 (30 Jun 2011)
+
+  30 Jun 2011; kTitan +vdrseriestimer-9999.ebuild, +files/cron.daily,
+  +files/epgsearchuservars.conf, +files/vdrseriestimer.conf, +metadata.xml:
+  inital live ebuild for vdrseriestimer
+
