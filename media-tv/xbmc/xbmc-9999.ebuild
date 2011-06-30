@@ -6,11 +6,10 @@ EAPI="2"
 
 inherit eutils python
 
-# Use XBMC_EGIT_REPO_URI to track a different branch
-EGIT_REPO_URI=${XBMC_EGIT_REPO_URI:-https://github.com/xbmc/xbmc.git}
-EGIT_BRANCH=${XBMC_EGIT_BRANCH:-master}
+EGIT_REPO_URI=https://github.com/xbmc/xbmc.git
+EGIT_BRANCH=master
 if [[ ${PV} == "9999" ]] ; then
-	inherit git autotools
+	inherit git-2 autotools
 	KEYWORDS=""
 else
 	inherit autotools
@@ -25,7 +24,7 @@ HOMEPAGE="http://xbmc.org/"
 
 LICENSE="GPL-2"
 SLOT="0"
-IUSE="aac alsa altivec avahi bluray css debug hal joystick midi profile pulseaudio rtmp sse sse2 udev vaapi vdpau webserver xrandr"
+IUSE="aac alsa altivec avahi bluray css debug joystick midi profile pulseaudio rtmp sse sse2 udev vaapi vdpau webserver xrandr"
 
 COMMON_DEPEND="virtual/opengl
 	app-arch/bzip2
@@ -38,7 +37,8 @@ COMMON_DEPEND="virtual/opengl
 	dev-libs/fribidi
 	dev-libs/libcdio[-minimal]
 	dev-libs/libpcre[cxx]
-	dev-libs/lzo
+	>=dev-libs/lzo-2.04
+	dev-libs/yajl
 	>=dev-python/pysqlite-2
 	media-libs/alsa-lib
 	aac? ( media-libs/faac )
@@ -46,10 +46,10 @@ COMMON_DEPEND="virtual/opengl
 	media-libs/flac
 	media-libs/fontconfig
 	media-libs/freetype
-	media-libs/glew
+	>=media-libs/glew-1.5.6
 	media-libs/jasper
 	media-libs/jbigkit
-	media-libs/jpeg:0
+	virtual/jpeg
 	>=media-libs/libass-0.9.7
 	bluray? ( media-libs/libbluray )
 	css? ( media-libs/libdvdcss )
@@ -63,20 +63,19 @@ COMMON_DEPEND="virtual/opengl
 	alsa? ( media-libs/libsdl[alsa] )
 	media-libs/libvorbis
 	media-libs/sdl-gfx
-	media-libs/sdl-image[gif,jpeg,png]
+	>=media-libs/sdl-image-1.2.10[gif,jpeg,png]
 	media-libs/sdl-mixer
 	media-libs/sdl-sound
 	media-libs/tiff
 	pulseaudio? ( media-sound/pulseaudio )
 	media-sound/wavpack
-	>=media-video/ffmpeg-0.6
+	>=virtual/ffmpeg-0.6
 	rtmp? ( media-video/rtmpdump )
 	avahi? ( net-dns/avahi )
 	webserver? ( net-libs/libmicrohttpd )
 	net-misc/curl
 	|| ( >=net-fs/samba-3.4.6[smbclient] <net-fs/samba-3.3 )
 	sys-apps/dbus
-	hal? ( sys-apps/hal )
 	sys-libs/zlib
 	virtual/mysql
 	x11-apps/xdpyinfo
@@ -101,7 +100,7 @@ DEPEND="${COMMON_DEPEND}
 
 src_unpack() {
 	if [[ ${PV} == "9999" ]] ; then
-		git_src_unpack
+		git-2_src_unpack
 		cd "${S}"
 		rm -f configure
 	else
@@ -115,13 +114,10 @@ src_unpack() {
 }
 
 src_prepare() {
-	sed -i \
-		-e '1i#include <stdlib.h>\n#include <string.h>\n' \
-		xbmc/lib/libid3tag/libid3tag/metadata.c || die
-
 	# some dirs ship generated autotools, some dont
 	local d
-	for d in . xbmc/cores/dvdplayer/Codecs/{libdts,libdvd/lib*/} lib/cpluff ; do
+	#for d in . lib/{libdvd/lib*/,cpluff} ; do
+	for d in . lib/{libdvd/lib*/,cpluff,libapetag,libid3tag/libid3tag} xbmc/screensavers/rsxs-* ; do
 		[[ -e ${d}/configure ]] && continue
 		pushd ${d} >/dev/null
 		einfo "Generating autotools in ${d}"
@@ -136,7 +132,7 @@ src_prepare() {
 	sed -i \
 		-e '/^CXXFLAGS/{s:-D[^=]*=.::;s:-m[[:alnum:]]*::}' \
 		-e "1iCXXFLAGS += ${squish}" \
-		xbmc/lib/libsquish/Makefile.in || die
+		lib/libsquish/Makefile.in || die
 
 	# Fix XBMC's final version string showing as "exported"
 	# instead of the SVN revision number.
@@ -144,11 +140,8 @@ src_prepare() {
 
 	# Avoid lsb-release dependency
 	sed -i \
-		-e 's:/usr/bin/lsb_release -d:cat /etc/gentoo-release:' \
-		xbmc/utils/SystemInfo.cpp
-
-	# Do not use termcap #262822
-	sed -i 's:-ltermcap::' xbmc/lib/libPython/Python/configure
+	    -e 's:lsb_release -d:cat /etc/gentoo-release:' \
+		xbmc/utils/SystemInfo.cpp || die
 
 	# avoid long delays when powerkit isn't running #348580
 	sed -i \
@@ -166,14 +159,14 @@ src_configure() {
 	export ac_cv_path_LATEX=no
 	# Avoid help2man
 	export HELP2MAN=$(type -P help2man || echo true)
+	# fix LD detection for screensaver roxx
+	export LD=/usr/`uname -m`-pc-linux-gnu/bin/ld
 
 	econf \
 		--docdir=/usr/share/doc/${PF} \
 		--disable-ccache \
 		--disable-optimizations \
 		--enable-external-ffmpeg \
-		--enable-external-liba52 \
-		--enable-external-libdts \
 		--disable-external-python \
 		--enable-goom \
 		--enable-gl \
@@ -181,8 +174,7 @@ src_configure() {
 		$(use_enable bluray libbluray) \
 		$(use_enable css dvdcss) \
 		$(use_enable debug) \
-		$(use_enable aac faac) \
-		$(use_enable hal) \
+		--disable-hal \
 		$(use_enable joystick) \
 		$(use_enable midi mid) \
 		$(use_enable profile profiling) \
