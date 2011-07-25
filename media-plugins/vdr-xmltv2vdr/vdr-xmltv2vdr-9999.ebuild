@@ -16,13 +16,26 @@ SRC_URI=""
 LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS=""
-IUSE=""
+IUSE="epgdata"
 
-DEPEND=">=media-video/vdr-1.7.14"
+DEPEND=">=media-video/vdr-1.7.14
+	dev-libs/libxslt
+	dev-libs/libxml2
+	net-misc/curl
+	dev-libs/libzip"
 RDEPEND="${DEPEND}"
 
 src_prepare() {
 	vdr-plugin_src_prepare
+}
+
+src_compile() {
+	vdr-plugin_src_compile
+
+	if use epgdata ; then
+		cd dist/epgdata2xmltv
+		emake || die "compile of epgdata2xmltv failed"
+	fi
 }
 
 src_install() {
@@ -30,4 +43,12 @@ src_install() {
 
 	dodir /var/lib/epgsources
 	fowners vdr:vdr /var/lib/epgsources
+
+	if use epgdata ; then
+		dobin dist/epgdata2xmltv/epgdata2xmltv || die
+
+		insinto /var/lib/epgsources
+		newins dist/epgdata2xmltv/epgdata2xmltv.dist epgdata2xmltv || die
+	fi
+
 }
