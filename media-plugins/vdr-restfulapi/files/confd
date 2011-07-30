@@ -1,0 +1,5 @@
+# /etc/conf.d/vdr.restfulapi:
+
+# Config-file for vdr plugin restfulapi
+
+_EXTRAOPTS="--port=8002 --ip=0.0.0.0 --epgimages=/var/vdr/epgimages --channellogos=/usr/share/vdr/channel-logos"

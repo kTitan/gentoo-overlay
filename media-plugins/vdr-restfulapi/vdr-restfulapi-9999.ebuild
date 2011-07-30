@@ -18,6 +18,13 @@ SLOT="0"
 KEYWORDS=""
 IUSE=""
 
-DEPEND=">=media-video/vdr-1.7.16
+DEPEND=">=media-video/vdr-1.7.18
 	>dev-libs/cxxtools-2.0"
 RDEPEND="${DEPEND}"
+
+src_install() {
+	vdr-plugin_src_install
+
+	dodir /var/vdr/epgimages
+	fowners vdr:vdr /var/vdr/epgimages
+}
