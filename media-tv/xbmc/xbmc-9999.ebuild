@@ -114,6 +114,10 @@ src_unpack() {
 }
 
 src_prepare() {
+	ewarn "If the compulle if this package fails and you are using ccache,"
+	ewarn "please upgrade you ccache version."
+	ewarn "In my case the 3.x versions did worked."
+
 	# some dirs ship generated autotools, some dont
 	local d
 	#for d in . lib/{libdvd/lib*/,cpluff} ; do
@@ -159,15 +163,12 @@ src_configure() {
 	export ac_cv_path_LATEX=no
 	# Avoid help2man
 	export HELP2MAN=$(type -P help2man || echo true)
-	# fix LD detection for screensaver roxx
-	export LD=/usr/`uname -m`-pc-linux-gnu/bin/ld
 
 	econf \
 		--docdir=/usr/share/doc/${PF} \
 		--disable-ccache \
 		--disable-optimizations \
 		--enable-external-ffmpeg \
-		--disable-external-python \
 		--enable-goom \
 		--enable-gl \
 		$(use_enable avahi) \
